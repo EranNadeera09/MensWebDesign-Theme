@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A87828;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C9A84C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B6210;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="markGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C9A84C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A87828;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="100" fill="#FFFFFF" rx="8"/>
+
+  <!-- Monogram mark: stylized "MC" -->
+  <g transform="translate(18, 14)">
+    <!-- Outer diamond frame -->
+    <polygon points="36,0 72,36 36,72 0,36" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+    <!-- Inner decorative lines -->
+    <polygon points="36,8 64,36 36,64 8,36" fill="none" stroke="url(#goldGrad)" stroke-width="0.8" opacity="0.4"/>
+    <!-- M shape -->
+    <polyline points="18,46 18,28 36,42 54,28 54,46" fill="none" stroke="url(#markGrad)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Small C arc -->
+    <path d="M50,52 A10,10 0 1,1 50,60" fill="none" stroke="url(#markGrad)" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Brand name -->
+  <text x="100" y="52" font-family="'Georgia', 'Palatino Linotype', serif" font-size="30" font-weight="700" letter-spacing="6" fill="url(#goldGrad)">MENS</text>
+  <text x="100" y="78" font-family="'Georgia', 'Palatino Linotype', serif" font-size="18" font-weight="400" letter-spacing="12" fill="#555">CREATIONS</text>
+
+  <!-- Thin accent line between words -->
+  <line x1="100" y1="57" x2="390" y2="57" stroke="url(#goldGrad)" stroke-width="0.5" opacity="0.3"/>
+</svg>
