@@ -15,19 +15,12 @@ get_header();
 
       <article class="portfolio-single">
 
-        <!-- Back Button -->
-        <a href="<?php echo esc_url(home_url('/projects/')); ?>" class="back-btn chip">
-          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-          <span class="label-large"><?php _e('Back to Projects', 'menscreations'); ?></span>
-          <div class="state-layer"></div>
-        </a>
-
         <!-- Category Tags -->
         <?php $post_cats = get_the_terms(get_the_ID(), 'project-category'); ?>
         <?php if ($post_cats && !is_wp_error($post_cats)): ?>
-          <div class="card-tags" style="margin-top: 16px;">
+          <div class="article-cat-tags">
             <?php foreach ($post_cats as $pcat): ?>
-              <a href="<?php echo esc_url(get_term_link($pcat)); ?>" class="tag label-small">
+              <a href="<?php echo esc_url(get_term_link($pcat)); ?>" class="article-cat-badge label-small">
                 <?php echo esc_html($pcat->name); ?>
               </a>
             <?php endforeach; ?>
@@ -37,7 +30,7 @@ get_header();
         <!-- Title & Excerpt -->
         <div class="portfolio-header">
           <h1 class="display-small"><?php the_title(); ?></h1>
-          <p class="body-large section-subtitle"><?php the_excerpt(); ?></p>
+          <p class="body-large section-subtitle article-post-intro"><?php the_excerpt(); ?></p>
         </div>
 
         <!-- Action Buttons -->
@@ -81,6 +74,13 @@ get_header();
           <?php the_content(); ?>
         </div>
 
+        <!-- Back Button -->
+        <a href="<?php echo esc_url(home_url('/projects/')); ?>" class="back-btn chip">
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+          <span class="label-large"><?php _e('Back to Projects', 'menscreations'); ?></span>
+          <div class="state-layer"></div>
+        </a>
+
         <!-- Prev / Next Navigation -->
         <nav class="project-nav" aria-label="<?php _e('Project navigation', 'menscreations'); ?>">
           <?php
@@ -119,7 +119,7 @@ get_header();
       <!-- ═══════════════════════════
            SIDEBAR COLUMN
       ═══════════════════════════ -->
-      <aside class="project-sidebar" aria-label="<?php _e('Project sidebar', 'menscreations'); ?>">
+      <aside class="article-page-sidebar" aria-label="<?php _e('Project sidebar', 'menscreations'); ?>">
 
         <!-- Project Details Card -->
         <div class="sidebar-card">

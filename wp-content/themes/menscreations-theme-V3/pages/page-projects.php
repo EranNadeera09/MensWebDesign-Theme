@@ -7,15 +7,23 @@
 get_header();
 
 // Get all project categories for filter tabs
-$categories = get_terms([
+$project_categories = get_terms([
     'taxonomy'   => 'project-category',
     'hide_empty' => true,
 ]);
+
+        $projects = new WP_Query([
+            'post_type'      => 'project',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ]);
 ?>
 
 <main id="main-content" role="main">
   <div class="container">
-    <section class="section archive-portfolio">
+    <section class="section archive-page archive-portfolio">
 
       <!-- Page Header -->
       <div class="archive-header">
@@ -26,13 +34,13 @@ $categories = get_terms([
       </div>
 
       <!-- Category Filter Tabs -->
-      <?php if (!empty($categories) && !is_wp_error($categories)): ?>
+      <?php if (!empty($project_categories) && !is_wp_error($project_categories)): ?>
         <div class="filter-tabs" id="filter-tabs">
           <button class="filter-btn active" data-filter="all">
             <span class="label-large"><?php _e('All', 'menscreations'); ?></span>
             <div class="state-layer"></div>
           </button>
-          <?php foreach ($categories as $cat): ?>
+          <?php foreach ($project_categories as $cat): ?>
             <button class="filter-btn" data-filter="<?php echo esc_attr($cat->slug); ?>">
               <span class="label-large"><?php echo esc_html($cat->name); ?></span>
               <div class="state-layer"></div>
@@ -42,15 +50,8 @@ $categories = get_terms([
       <?php endif; ?>
 
       <!-- Projects Grid -->
-      <div class="project-grid" id="projects-grid">
+      <div class="archive-card-grid" id="projects-grid">
         <?php
-        $projects = new WP_Query([
-            'post_type'      => 'project',
-            'posts_per_page' => -1,
-            'post_status'    => 'publish',
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-        ]);
 
         if ($projects->have_posts()):
             while ($projects->have_posts()): $projects->the_post();

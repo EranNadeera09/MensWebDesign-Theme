@@ -4,10 +4,7 @@
 <head>
   <meta charset="<?php bloginfo('charset'); ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Canonical URL for SEO -->
-  <link rel="canonical" href="<?php echo esc_url(get_permalink() ?: home_url('/')); ?>">
-
+  
   <!-- Favicon -->
   <?php if (has_site_icon()): ?>
     <?php wp_site_icon(); ?>

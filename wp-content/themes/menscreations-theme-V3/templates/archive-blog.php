@@ -7,32 +7,37 @@
 
 get_header();
 
-// Get all post categories
-$blog_categories = get_categories(['hide_empty' => true]);
+// Detect if we are on a Category Archive or the main Blog page
+$current_category = get_queried_object();
+$is_cat           = is_category();
+$cat_id           = $is_cat ? $current_category->term_id : 0;
 
-// Pagination
-$paged       = max(1, get_query_var('paged'), get_query_var('page'));
-$posts_per_page = 9;
+// Setup Pagination
+$paged = max(1, get_query_var('paged'), get_query_var('page'));
 
-$blog_query = new WP_Query([
+// Main Grid Query (Automatically filters by category if on a cat page)
+$args = [
   'post_type'      => 'post',
-  'post_status'    => 'publish',
-  'posts_per_page' => $posts_per_page,
+  'posts_per_page' => 9,
   'paged'          => $paged,
-  'orderby'        => 'date',
-  'order'          => 'DESC',
-]);
+  'post_status'    => 'publish'
+];
 
-// Featured post (latest)
-$featured_query = new WP_Query([
-  'post_type'      => 'post',
-  'post_status'    => 'publish',
-  'posts_per_page' => 1,
-  'orderby'        => 'date',
-  'order'          => 'DESC',
-]);
-$featured_post = $featured_query->have_posts() ? $featured_query->posts[0] : null;
-wp_reset_postdata();
+if ($is_cat) {
+  $args['cat'] = $cat_id;
+}
+
+$blog_query = new WP_Query($args);
+
+// Featured Post Query (Only show 1, filtered by cat if applicable)
+$feat_args = $args;
+$feat_args['posts_per_page'] = 1;
+$featured_query = new WP_Query($feat_args);
+$featured_post  = $featured_query->have_posts() ? $featured_query->posts[0] : null;
+
+// Get categories for the filter tabs
+$categories = get_categories(['hide_empty' => true]);
+
 ?>
 
 <main id="main-content" role="main">
@@ -41,23 +46,27 @@ wp_reset_postdata();
 
       <!-- Page Header -->
       <div class="archive-header">
-        <h1 class="display-small"><?php _e('Blogs', 'menscreations'); ?></h1>
+        <h1 class="display-small">
+          <?php echo $is_cat ? esc_html($current_category->name) : __('Blog', 'menscreations'); ?>
+        </h1>
         <p class="body-large section-subtitle">
-          <?php _e('Insights on web development, SEO, and digital design.', 'menscreations'); ?>
+          <?php echo $is_cat ? esc_html($current_category->description) : __('Insights on web development, SEO, and digital design.', 'menscreations'); ?>
         </p>
       </div>
 
       <!-- Category Filter -->
-      <?php if (!empty($blog_categories)): ?>
+      <?php if (!empty($categories)): ?>
         <div class="filter-tabs" id="blog-filter-tabs">
-          <a href="<?php echo esc_url(get_permalink()); ?>" class="filter-btn <?php echo !isset($_GET['cat']) ? 'active' : ''; ?>" data-filter="all">
+          <!-- "All" Button -->
+          <a href="<?php echo esc_url(get_post_type_archive_link('post')); ?>"
+            class="filter-btn <?php echo !$is_cat ? 'active' : ''; ?>">
             <span class="label-large"><?php _e('All', 'menscreations'); ?></span>
-            <div class="state-layer"></div>
           </a>
-          <?php foreach ($blog_categories as $cat): ?>
-            <a href="<?php echo esc_url(get_category_link($cat->term_id)); ?>" class="filter-btn <?php echo (get_query_var('cat') == $cat->term_id) ? 'active' : ''; ?>" data-filter="<?php echo esc_attr($cat->slug); ?>">
+
+          <?php foreach ($categories as $cat): ?>
+            <a href="<?php echo esc_url(get_category_link($cat->term_id)); ?>"
+              class="filter-btn <?php echo ($cat_id === $cat->term_id) ? 'active' : ''; ?>">
               <span class="label-large"><?php echo esc_html($cat->name); ?></span>
-              <div class="state-layer"></div>
             </a>
           <?php endforeach; ?>
         </div>
