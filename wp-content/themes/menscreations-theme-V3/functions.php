@@ -7,8 +7,7 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * ACF Helper — moved here from front-page.php to prevent fatal error
- * "Cannot redeclare mc_field()" when ACF is active
+ * ACF Helper — prevents fatal error "Cannot redeclare mc_field()"
  */
 if (!function_exists('mc_field')) {
     function mc_field($key, $fallback = '') {
@@ -78,6 +77,8 @@ function menscreations_meta_description() {
     } elseif (is_singular()) {
         global $post;
         $description = wp_trim_words(get_the_excerpt(), 25, '...');
+    } elseif (is_category() || is_tag()) {
+        $description = strip_tags(term_description());
     } else {
         $description = get_bloginfo('description');
     }
@@ -100,16 +101,25 @@ function menscreations_open_graph() {
                     ? get_the_post_thumbnail_url(null, 'large')
                     : get_template_directory_uri() . '/images/og-image.png';
 
+    // Article type for blog posts
+    $og_type = is_singular('post') ? 'article' : 'website';
+
     echo '<meta property="og:site_name" content="'   . esc_attr($site_name)   . '">' . "\n";
     echo '<meta property="og:title" content="'       . esc_attr($title)       . '">' . "\n";
     echo '<meta property="og:description" content="' . esc_attr($description) . '">' . "\n";
     echo '<meta property="og:url" content="'         . esc_url($url)          . '">' . "\n";
     echo '<meta property="og:image" content="'       . esc_url($image)        . '">' . "\n";
-    echo '<meta property="og:type" content="website">'                               . "\n";
+    echo '<meta property="og:type" content="'        . esc_attr($og_type)     . '">' . "\n";
     echo '<meta name="twitter:card" content="summary_large_image">'                  . "\n";
     echo '<meta name="twitter:title" content="'      . esc_attr($title)       . '">' . "\n";
     echo '<meta name="twitter:description" content="'. esc_attr($description) . '">' . "\n";
     echo '<meta name="twitter:image" content="'      . esc_url($image)        . '">' . "\n";
+
+    // Article published/modified dates for blog posts
+    if (is_singular('post')) {
+        echo '<meta property="article:published_time" content="' . esc_attr(get_the_date('c')) . '">' . "\n";
+        echo '<meta property="article:modified_time" content="'  . esc_attr(get_the_modified_date('c')) . '">' . "\n";
+    }
 }
 add_action('wp_head', 'menscreations_open_graph');
 
@@ -168,16 +178,19 @@ add_action('wp_ajax_nopriv_menscreations_contact', 'menscreations_handle_contact
  */
 function menscreations_template_include($template) {
 
+    // Single project
     if (is_singular('project')) {
         $custom = get_template_directory() . '/templates/single-project.php';
         if (file_exists($custom)) return $custom;
     }
 
+    // Project archive
     if (is_post_type_archive('project')) {
         $custom = get_template_directory() . '/templates/archive-project.php';
         if (file_exists($custom)) return $custom;
     }
 
+    // Project taxonomy
     if (is_tax('project-category')) {
         $custom = get_template_directory() . '/templates/archive-project.php';
         if (file_exists($custom)) return $custom;
@@ -186,6 +199,31 @@ function menscreations_template_include($template) {
     // Projects page
     if (is_page('projects')) {
         $custom = get_template_directory() . '/pages/page-projects.php';
+        if (file_exists($custom)) return $custom;
+    }
+
+    // Blogs page -----------------------------------------------------------
+    // Use is_home() to detect the main blog feed page
+    if (is_home() || is_page('blogs')) {
+        $custom = get_template_directory() . '/pages/page-blogs.php';
+        if (file_exists($custom)) return $custom;
+    }
+
+    // Posts archive
+    if (is_post_type_archive('post')) {
+        $custom = get_template_directory() . '/pages/page-blogs.php';
+        if (file_exists($custom)) return $custom;
+    }
+
+    // Project taxonomy
+    if (is_category() || is_tag() || is_archive()) {
+        $custom = get_template_directory() . '/templates/archive-blog.php';
+        if (file_exists($custom)) return $custom;
+    }
+
+    // Blog Single Post
+    if (is_singular('post')) {
+        $custom = get_template_directory() . '/templates/single-blog.php';
         if (file_exists($custom)) return $custom;
     }
 
@@ -199,29 +237,56 @@ add_filter('template_include', 'menscreations_template_include');
 function menscreations_excerpt_length() { return 20; }
 add_filter('excerpt_length', 'menscreations_excerpt_length');
 
-// Remove p tags from excerpts
+// Remove extra p tags from excerpts
 remove_filter('the_excerpt', 'wpautop');
 
 /**
  * Schema.org structured data for SEO
  */
 function menscreations_schema_markup() {
-    $schema = [
-        '@context' => 'https://schema.org',
-        '@type'    => 'Person',
-        'name'     => get_bloginfo('name'),
-        'url'      => home_url('/'),
-        'jobTitle' => 'Web Developer & Technical SEO Specialist',
-        'address'  => [
-            '@type'           => 'PostalAddress',
-            'addressLocality' => 'Kurunegala',
-            'addressCountry'  => 'LK',
-        ],
-        'sameAs' => [
-            'https://linkedin.com/in/erannadeera20/',
-            'https://github.com/',
-        ],
-    ];
+    if (is_singular('post')) {
+        // BlogPosting schema for blog posts
+        global $post;
+        $schema = [
+            '@context'         => 'https://schema.org',
+            '@type'            => 'BlogPosting',
+            'headline'         => get_the_title(),
+            'url'              => get_permalink(),
+            'datePublished'    => get_the_date('c'),
+            'dateModified'     => get_the_modified_date('c'),
+            'description'      => wp_trim_words(get_the_excerpt(), 25),
+            'author' => [
+                '@type' => 'Person',
+                'name'  => get_the_author(),
+                'url'   => home_url('/'),
+            ],
+            'publisher' => [
+                '@type' => 'Person',
+                'name'  => get_bloginfo('name'),
+                'url'   => home_url('/'),
+            ],
+        ];
+        if (has_post_thumbnail()) {
+            $schema['image'] = get_the_post_thumbnail_url(null, 'large');
+        }
+    } else {
+        // Person schema for portfolio
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type'    => 'Person',
+            'name'     => get_bloginfo('name'),
+            'url'      => home_url('/'),
+            'jobTitle' => 'Web Developer & Technical SEO Specialist',
+            'address'  => [
+                '@type'           => 'PostalAddress',
+                'addressLocality' => 'Kurunegala',
+                'addressCountry'  => 'LK',
+            ],
+            'sameAs' => [
+                'https://linkedin.com/in/erannadeera20/',
+            ],
+        ];
+    }
     echo '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>' . "\n";
 }
 add_action('wp_head', 'menscreations_schema_markup');
@@ -229,20 +294,26 @@ add_action('wp_head', 'menscreations_schema_markup');
 /**
  * Header scroll effect
  */
-function menscreations_header_scroll_script() {
-    ?>
+function menscreations_header_scroll_script() { ?>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const header = document.querySelector("header[role='banner']");
         if (header) {
-            const handleScroll = () => {
-                header.classList.toggle('scrolled', window.scrollY > 10);
-            };
+            const handleScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
             handleScroll();
             window.addEventListener('scroll', handleScroll, { passive: true });
         }
+        // Copy link button
+        document.querySelectorAll('.blog-copy-link').forEach(btn => {
+            btn.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.dataset.url).then(() => {
+                    const icon = this.querySelector('.material-symbols-outlined');
+                    icon.textContent = 'check';
+                    setTimeout(() => icon.textContent = 'link', 2000);
+                });
+            });
+        });
     });
     </script>
-    <?php
-}
+<?php }
 add_action('wp_footer', 'menscreations_header_scroll_script');

@@ -15,7 +15,7 @@ $categories = get_terms([
 
 <main id="main-content" role="main">
   <div class="container">
-    <section class="section archive-portfolio">
+    <section class="section archive-page archive-portfolio">
 
       <!-- Page Header -->
       <div class="archive-header">
@@ -28,7 +28,7 @@ $categories = get_terms([
       </div>
 
       <!-- Projects Grid -->
-      <div class="project-grid" id="projects-grid">
+      <div class="archive-card-grid" id="projects-grid">
         <?php if (have_posts()): ?>
           <?php while (have_posts()): the_post();
             $project_url = function_exists('get_field') ? get_field('project_url') : get_post_meta(get_the_ID(), 'project_url', true);
