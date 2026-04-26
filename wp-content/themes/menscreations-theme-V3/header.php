@@ -4,7 +4,7 @@
 <head>
   <meta charset="<?php bloginfo('charset'); ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <!-- Favicon -->
   <?php if (has_site_icon()): ?>
     <?php wp_site_icon(); ?>
@@ -13,23 +13,34 @@
   <?php endif; ?>
 
   <?php wp_head(); ?>
-  
+
   <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-M7ZBW8JM');</script>
+  <script>
+    (function(w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js'
+      });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-M7ZBW8JM');
+  </script>
   <!-- End Google Tag Manager -->
-  
+
 </head>
 
 <body <?php body_class(); ?>>
   <?php wp_body_open(); ?>
-  
+
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7ZBW8JM"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
   <!-- SKIP TO CONTENT -->
@@ -53,7 +64,7 @@
             'menu_class'     => 'nav-list',
             'container'      => false,
             'depth'          => 1,
-            'fallback_cb'    => function() {
+            'fallback_cb'    => function () {
               echo '<ul class="nav-list">
                 <li><a href="#">Projects</a></li>
                 <li><a href="#">Blogs</a></li>
@@ -65,6 +76,12 @@
 
         <!-- Right Actions -->
         <div class="topbar-actions">
+
+          <!-- Hire Me Button -->
+          <a href="https://www.fiverr.com/slcreationsgang/design-and-customize-wordpress-website-or-landing-page" target="_blank" rel="noopener noreferrer" class="btn hire-btn">
+            <span class="label-large">Hire Me</span>
+            <div class="state-layer"></div>
+          </a>
 
           <!-- Theme Toggle -->
           <button class="icon-btn theme-btn" data-theme-btn aria-label="<?php _e('Toggle dark/light mode', 'menscreations'); ?>">

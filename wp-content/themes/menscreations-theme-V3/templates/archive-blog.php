@@ -36,7 +36,7 @@ $featured_query = new WP_Query($feat_args);
 $featured_post  = $featured_query->have_posts() ? $featured_query->posts[0] : null;
 
 // Get categories for the filter tabs
-$categories = get_categories(['hide_empty' => true]);
+$blog_categories = get_categories(['hide_empty' => true]);
 
 ?>
 
@@ -55,7 +55,7 @@ $categories = get_categories(['hide_empty' => true]);
       </div>
 
       <!-- Category Filter -->
-      <?php if (!empty($categories)): ?>
+      <?php if (!empty($blog_categories)): ?>
         <div class="filter-tabs" id="blog-filter-tabs">
           <!-- "All" Button -->
           <a href="<?php echo esc_url(get_post_type_archive_link('post')); ?>"
@@ -63,7 +63,7 @@ $categories = get_categories(['hide_empty' => true]);
             <span class="label-large"><?php _e('All', 'menscreations'); ?></span>
           </a>
 
-          <?php foreach ($categories as $cat): ?>
+          <?php foreach ($blog_categories as $cat): ?>
             <a href="<?php echo esc_url(get_category_link($cat->term_id)); ?>"
               class="filter-btn <?php echo ($cat_id === $cat->term_id) ? 'active' : ''; ?>">
               <span class="label-large"><?php echo esc_html($cat->name); ?></span>

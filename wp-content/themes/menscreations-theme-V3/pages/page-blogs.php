@@ -47,17 +47,19 @@ wp_reset_postdata();
         </p>
       </div>
 
-      <!-- Category Filter -->
+  <!-- Category Filter -->
       <?php if (!empty($blog_categories)): ?>
         <div class="filter-tabs" id="blog-filter-tabs">
-          <a href="<?php echo esc_url(get_permalink()); ?>" class="filter-btn <?php echo !isset($_GET['cat']) ? 'active' : ''; ?>" data-filter="all">
+          <!-- "All" Button -->
+          <a href="<?php echo esc_url(get_post_type_archive_link('post')); ?>"
+            class="filter-btn <?php echo !$is_cat ? 'active' : ''; ?>">
             <span class="label-large"><?php _e('All', 'menscreations'); ?></span>
-            <div class="state-layer"></div>
           </a>
+
           <?php foreach ($blog_categories as $cat): ?>
-            <a href="<?php echo esc_url(get_category_link($cat->term_id)); ?>" class="filter-btn <?php echo (get_query_var('cat') == $cat->term_id) ? 'active' : ''; ?>" data-filter="<?php echo esc_attr($cat->slug); ?>">
+            <a href="<?php echo esc_url(get_category_link($cat->term_id)); ?>"
+              class="filter-btn <?php echo ($cat_id === $cat->term_id) ? 'active' : ''; ?>">
               <span class="label-large"><?php echo esc_html($cat->name); ?></span>
-              <div class="state-layer"></div>
             </a>
           <?php endforeach; ?>
         </div>
@@ -136,7 +138,7 @@ wp_reset_postdata();
               <div class="card-content">
 
                 <?php if (!empty($post_cats)): ?>
-                  <a href="<?php echo esc_url(get_category_link($post_cats[0]->term_id)); ?>" class="tag label-small">
+                  <a href="<?php echo esc_url(get_category_link($post_cats[0]->term_id)); ?>" class="tag label-small bottom-margin-10">
                     <?php echo esc_html($post_cats[0]->name); ?>
                   </a>
                 <?php endif; ?>

@@ -83,6 +83,8 @@ Tags: portfolio, one-page, dark-mode, responsive, custom-colors
   --top-padding-20: 20px;
   --bottom-padding-20: 20px;
 
+  --bottom-margin-10: 10px;
+
   --top-margin-20: 20px;
   --bottom-margin-20: 20px;
   --top-bar-height: 64px;
@@ -224,6 +226,9 @@ body {
 }
 .top-margin-20 {
   margin-top: var(--top-margin-20);
+}
+.bottom-margin-10 {
+  margin-bottom: var(--bottom-margin-10);
 }
 .bottom-margin-20 {
   margin-bottom: var(--bottom-margin-20);
@@ -445,7 +450,7 @@ body {
 }
 .card-content {
   display: grid;
-  padding: 15px;
+  padding: 5px 15px 20px;
   gap: 4px;
 }
 .card-subtitle {
@@ -529,6 +534,21 @@ header[role="banner"].scrolled {
 [data-theme="dark"] .logo .dark,
 [data-theme="light"] .logo .light {
   display: block;
+}
+
+/* Hire Me Button */
+.hire-btn {
+  height: 36px;
+  padding-inline: 20px;
+  font-size: var(--label-large);
+  border-radius: var(--shape-corner-full);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Hide on mobile — show only on desktop */
+@media (max-width: 767px) {
+  .hire-btn { display: none; }
 }
 
 /* Theme Button */
